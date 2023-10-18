@@ -34,7 +34,7 @@ using namespace common;
 RC ExecuteStage::handle_request(SQLStageEvent *sql_event)
 {
   RC rc = RC::SUCCESS;
-  const unique_ptr<PhysicalOperator> &physical_operator = sql_event->physical_operator();
+  const unique_ptr<PhysicalOperator> &physical_operator = sql_event->physical_operator();   // 生成的执行计划，也可能没有 --by 星穹铁道高手
   if (physical_operator != nullptr) {
     return handle_request_with_physical_operator(sql_event);
   }

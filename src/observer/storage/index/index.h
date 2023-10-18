@@ -45,6 +45,8 @@ public:
     return index_meta_;
   }
 
+  virtual RC drop() = 0;    // --by 星穹铁道高手
+
   /**
    * @brief 插入一条数据
    * 
