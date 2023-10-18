@@ -47,12 +47,15 @@ public:
    * @param attribute_count 字段个数
    * @param attributes 字段
    */
-  RC create(int32_t table_id, 
-            const char *path, 
-            const char *name, 
-            const char *base_dir, 
-            int attribute_count, 
-            const AttrInfoSqlNode attributes[]);
+  RC create(int32_t table_id, const char *path, const char *name, const char *base_dir,
+            int attribute_count, const AttrInfoSqlNode attributes[]);
+
+  /**
+   * 删除一个表
+   * @param path 元数据保存的文件(完整路径)
+   * @param name 表名
+  */
+  RC drop(const char *path);
 
   /**
    * 打开一个表
@@ -76,8 +79,11 @@ public:
    * @param record[in/out] 传入的数据包含具体的数据，插入成功会通过此字段返回RID
    */
   RC insert_record(Record &record);
+
   RC delete_record(const Record &record);
+
   RC visit_record(const RID &rid, bool readonly, std::function<void(Record &)> visitor);
+
   RC get_record(const RID &rid, Record &record);
 
   RC recover_insert_record(Record &record);

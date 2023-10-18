@@ -9,7 +9,7 @@ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details. */
 
 //
-// Created by Wangyunlai on 2023/6/13.
+// Created by Wangyunlai on 2023/6/14.
 //
 
 #pragma once
@@ -22,27 +22,24 @@ See the Mulan PSL v2 for more details. */
 class Db;
 
 /**
- * @brief 表示创建表的语句
+ * @brief 删除表的语句
  * @ingroup Statement
  * @details 虽然解析成了stmt，但是与原始的SQL解析后的数据也差不多
  */
-class CreateTableStmt : public Stmt
+class DropTableStmt : public Stmt
 {
 public:
-  CreateTableStmt(const std::string &table_name, const std::vector<AttrInfoSqlNode> &attr_infos)
-        : table_name_(table_name), attr_infos_(attr_infos) {}
+  DropTableStmt() = default;
+  DropTableStmt(const std::string &table_name) : table_name_(table_name) {}
 
-  virtual ~CreateTableStmt() = default;
+  virtual ~DropTableStmt() = default;
 
-  StmtType type() const override { return StmtType::CREATE_TABLE; }
+  StmtType type() const override { return StmtType::DROP_TABLE; }
 
   const std::string &table_name() const { return table_name_; }
-  
-  const std::vector<AttrInfoSqlNode> &attr_infos() const { return attr_infos_; }
 
-  static RC create(Db *db, const CreateTableSqlNode &create_table, Stmt *&stmt);
+  static RC create(Db *db, const DropTableSqlNode &drop_table, Stmt *&stmt);
 
 private:
-  std::string table_name_;    // 表名
-  std::vector<AttrInfoSqlNode> attr_infos_;   // create table的属性列表
+  std::string table_name_;    // 删除表的表名
 };

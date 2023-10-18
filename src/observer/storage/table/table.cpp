@@ -126,6 +126,46 @@ RC Table::create(int32_t table_id,
   return rc;
 }
 
+RC Table::drop(const char *path)
+{
+  RC rc = RC::SUCCESS;
+
+  // drop index
+  for (Index *index : indexes_) {
+    index->drop();
+  }
+
+  /*
+private:
+  std::string base_dir_;
+  TableMeta   table_meta_;
+  DiskBufferPool *data_buffer_pool_ = nullptr;   /// 数据文件关联的buffer pool
+  RecordFileHandler *record_handler_ = nullptr;  /// 记录操作
+  std::vector<Index *> indexes_;
+  */
+  // 释放record_handler
+  record_handler_->close();
+  delete record_handler_;
+  record_handler_ = nullptr;
+
+  // 释放BufferPoolManager和相关文件
+  std::string data_file = table_data_file(base_dir_.c_str(), table_meta_.name());
+  BufferPoolManager &bpm = BufferPoolManager::instance();
+  rc = bpm.remove_file(data_file.c_str());
+  if (rc != RC::SUCCESS) {
+    LOG_ERROR("Failed to remove disk buffer pool of data file: %s", data_file.c_str());
+    return rc; // 删除缓冲池失败
+  }
+
+  // remove meta file
+  int remove_ret = ::remove(path);
+  if (remove_ret != 0) {
+    LOG_ERROR("Failed to delete table file: %s", path);
+    return RC::IOERR_REMOVE; // 删除文件失败
+  }
+  return rc;
+}
+
 RC Table::open(const char *meta_file, const char *base_dir)
 {
   // 加载元数据文件
